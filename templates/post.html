@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Post a Job{% endblock %}
+
+{% block content %}
+<div class="hero-gradient hero-sm">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-1">Post a New Job</h1>
+        <p class="opacity-75 mb-0">Describe what you need done and set your budget</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="/post">
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-medium">Job title</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                   placeholder="e.g. Fix leaking kitchen tap"
+                                   value="{{ request.form.get('title', '') }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-medium">Description</label>
+                            <textarea class="form-control" id="description" name="description"
+                                      rows="4" placeholder="Describe what needs to be done..." required>{{ request.form.get('description', '') }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="budget" class="form-label fw-medium">Budget (AUD)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">$</span>
+                                <input type="number" class="form-control" id="budget" name="budget"
+                                       min="1" step="1" placeholder="50"
+                                       value="{{ request.form.get('budget', '') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="category" class="form-label fw-medium">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                {% for cat in categories %}
+                                <option value="{{ cat }}" {% if request.form.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Post Job</button>
+                            <a href="/jobs" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

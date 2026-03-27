@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Browse Jobs{% endblock %}
+
+{% block content %}
+<div class="hero-gradient hero-sm">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-1">Available Jobs</h1>
+        <p class="opacity-75 mb-0">Browse open tasks and start earning</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Search & Filter -->
+    <div class="search-section mb-4">
+        <form method="GET" action="/jobs">
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-5">
+                    <label for="q" class="form-label fw-medium small mb-1">Search</label>
+                    <input type="text" class="form-control" id="q" name="q"
+                           placeholder="Search jobs..." value="{{ q }}">
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="category" class="form-label fw-medium small mb-1">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 d-grid">
+                    <label class="form-label small mb-1 d-none d-md-block">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Count -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-muted mb-0">
+            Showing <strong>{{ jobs|length }}</strong> job{{ 's' if jobs|length != 1 else '' }}
+            {% if q %} matching "<em>{{ q }}</em>"{% endif %}
+            {% if category %} in <em>{{ category }}</em>{% endif %}
+        </p>
+        {% if q or category %}
+        <a href="/jobs" class="btn btn-sm btn-outline-secondary">Clear filters</a>
+        {% endif %}
+    </div>
+
+    <!-- Job Cards -->
+    {% if jobs %}
+    <div class="row g-3">
+        {% for job in jobs %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 card-hover">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        {% set badge_class = {
+                            'Home Repairs': 'badge-home-repairs',
+                            'Moving': 'badge-moving',
+                            'Assembly': 'badge-assembly',
+                            'Cleaning': 'badge-cleaning',
+                            'Delivery': 'badge-delivery',
+                            'Gardening': 'badge-gardening'
+                        }.get(job.category, 'badge-other') %}
+                        <span class="badge rounded-pill {{ badge_class }}">{{ job.category }}</span>
+                        <span class="budget-tag">${{ "%.0f"|format(job.budget) }}</span>
+                    </div>
+
+                    <h6 class="card-title fw-semibold mb-1">
+                        <a href="/jobs/{{ job.id }}" class="text-decoration-none text-dark">{{ job.title }}</a>
+                    </h6>
+
+                    <p class="card-text text-body-secondary small flex-grow-1">
+                        {{ job.description[:120] }}{% if job.description|length > 120 %}...{% endif %}
+                    </p>
+
+                    <div class="d-flex justify-content-between text-body-tertiary small mt-2 pt-2 border-top">
+                        <span><i class="bi bi-person me-1"></i>{{ job.posted_by }}</span>
+                        <span><i class="bi bi-clock me-1"></i>{{ job.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-body-secondary">
+        <h5>No jobs found</h5>
+        <p>Try a different search or <a href="/jobs">browse all jobs</a>.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

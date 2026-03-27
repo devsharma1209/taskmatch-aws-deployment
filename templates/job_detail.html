@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title_suffix %} — {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="hero-gradient hero-sm">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-1">Job Details</h1>
+        <p class="opacity-75 mb-0">View details and make an offer</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+
+            <!-- Job Details -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        {% set badge_class = {
+                            'Home Repairs': 'badge-home-repairs',
+                            'Moving': 'badge-moving',
+                            'Assembly': 'badge-assembly',
+                            'Cleaning': 'badge-cleaning',
+                            'Delivery': 'badge-delivery',
+                            'Gardening': 'badge-gardening'
+                        }.get(job.category, 'badge-other') %}
+                        <span class="badge {{ badge_class }}">{{ job.category }}</span>
+                        <span class="budget-tag">${{ "%.0f"|format(job.budget) }}</span>
+                    </div>
+                    <h3 class="fw-bold mb-3">{{ job.title }}</h3>
+                    <p class="text-body-secondary mb-3">{{ job.description }}</p>
+                    <div class="text-body-tertiary small border-top pt-3">
+                        <span class="me-3"><i class="bi bi-person me-1"></i>{{ job.posted_by }}</span>
+                        <span><i class="bi bi-clock me-1"></i>{{ job.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offers -->
+            <h5 class="fw-bold mb-3">Offers ({{ offers|length }})</h5>
+
+            {% if offers %}
+                {% for offer in offers %}
+                <div class="card mb-2">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>{{ offer.username }}</strong>
+                            <span class="budget-tag fs-6">${{ "%.0f"|format(offer.amount) }}</span>
+                        </div>
+                        <p class="mb-1 text-body-secondary small">{{ offer.message }}</p>
+                        <small class="text-body-tertiary">{{ offer.created_at.strftime('%d %b %Y %H:%M') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No offers yet. Be the first to make one!</p>
+            {% endif %}
+
+            <!-- Offer Form -->
+            {% if session.get('user_id') %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Make an Offer</h5>
+                    <form method="POST" action="/jobs/{{ job.id }}/offer">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label fw-medium">Your offer (AUD)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">$</span>
+                                <input type="number" class="form-control" id="amount" name="amount"
+                                       min="1" step="1" placeholder="50" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label fw-medium">Message</label>
+                            <textarea class="form-control" id="message" name="message"
+                                      rows="3" placeholder="Why you're a good fit for this job..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Offer</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="card bg-light mt-4">
+                <div class="card-body text-center p-4">
+                    <p class="mb-2">Want to make an offer?</p>
+                    <a href="/login" class="btn btn-primary btn-sm">Log in</a>
+                    or
+                    <a href="/register" class="btn btn-outline-primary btn-sm">Register</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <a href="/jobs" class="btn btn-outline-secondary mt-3">Back to Jobs</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
