@@ -46,7 +46,6 @@ taskmatch/
 - Server-side rendering using Jinja2
 - Separation of deployment and application logic
 - Lightweight and easy to deploy
-
 Nginx acts as a reverse proxy, forwarding requests from port 80 to Gunicorn running on port 5000.
 ---
 
@@ -54,7 +53,28 @@ Nginx acts as a reverse proxy, forwarding requests from port 80 to Gunicorn runn
 
 ### `deploy/schema.sql`
 
-Three tables. Run once against RDS after first EC2 instance is healthy.
+The application uses a **relational database hosted on Amazon RDS (MySQL)**. The schema is designed to be simple, normalized, and efficient for handling user interactions such as job posting and bidding.
+
+### Key Components
+
+- **users**
+  - Stores user credentials and account details  
+  - Includes username, password hash, and creation timestamp  
+
+- **jobs**
+  - Stores all job listings posted by users  
+  - Includes title, description, budget, category, and creator  
+
+- **offers**
+  - Stores bids submitted by users on jobs  
+  - Links users and jobs through foreign keys  
+
+### Design Highlights
+
+- Foreign key constraints ensure data integrity  
+- Normalized structure reduces redundancy  
+- Timestamp fields help track activity  
+- Seed data ensures the application is populated during demos  
 
 ```sql
 CREATE DATABASE IF NOT EXISTS taskmatch;
@@ -100,6 +120,23 @@ INSERT INTO jobs (title, description, budget, category, posted_by) VALUES
 ---
 
 ## 3. Application Code
+
+The backend is implemented using **Flask in a monolithic structure**, focusing on simplicity and clarity rather than microservices complexity.
+
+### Key Features
+
+- Server-side rendering using Jinja2  
+- Environment-based configuration for flexibility  
+- Stateless session management using signed cookies  
+- Centralised error handling for improved user experience  
+
+### Important Design Decisions
+
+- No hardcoded secrets — all sensitive data is stored in SSM  
+- Database connections are safely managed to avoid leaks  
+- `/health` endpoint verifies database connectivity for load balancer checks  
+- Shared `SECRET_KEY` ensures session consistency across multiple instances  
+
 
 ### `requirements.txt`
 
@@ -152,6 +189,8 @@ server {
 
 ## 4. Local Development
 
+
+
 ```bash
 # Set environment variables
 export SECRET_KEY=any-local-dev-string
@@ -175,7 +214,26 @@ python app.py
 
 ## 5. AWS Deployment Guide
 
-Region: **us-east-1**
+The application is deployed in **us-east-1** using a three-tier cloud architecture that separates networking, application, and database layers.
+
+### Architecture Layers
+
+- **Public Layer**
+  - Application Load Balancer (ALB)  
+  - NAT Gateway for outbound internet access  
+
+- **Application Layer (Private Subnets)**
+  - EC2 instances managed by Auto Scaling Group  
+
+- **Database Layer (Private Subnets)**
+  - Amazon RDS with Multi-AZ enabled  
+
+### Key Benefits
+
+- High availability across multiple Availability Zones  
+- Fault tolerance through automatic instance replacement  
+- Secure isolation between layers  
+- Controlled and secure internet access  
 
 ---
 
