@@ -40,11 +40,12 @@ taskmatch/
 └── README.md
 ```
 
-Key Design Principles
-    No frontend build tools or frameworks
-    Server-side rendering using Jinja2
-    Separation of deployment and application logic
-    Lightweight and easy to deploy
+### Key Design Principles
+
+- No frontend build tools or frameworks
+- Server-side rendering using Jinja2
+- Separation of deployment and application logic
+- Lightweight and easy to deploy
 
 Nginx acts as a reverse proxy, forwarding requests from port 80 to Gunicorn running on port 5000.
 ---
