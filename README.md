@@ -1,4 +1,4 @@
-#TaskMatch: A Cloud-Based Job Posting and Bidding Platform
+# TaskMatch: A Cloud-Based Job Posting and Bidding Platform
 
 TaskMatch is a simplified job marketplace web application inspired by platforms like Airtasker. It enables users to post jobs, browse listings, and submit offers.
 
