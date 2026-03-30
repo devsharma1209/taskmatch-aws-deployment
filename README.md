@@ -40,8 +40,13 @@ taskmatch/
 └── README.md
 ```
 
-No frontend build step. No separate API. No JavaScript framework. Flask renders HTML directly via Jinja2. Nginx proxies port 80 to Gunicorn on 127.0.0.1:5000.
+Key Design Principles
+    No frontend build tools or frameworks
+    Server-side rendering using Jinja2
+    Separation of deployment and application logic
+    Lightweight and easy to deploy
 
+Nginx acts as a reverse proxy, forwarding requests from port 80 to Gunicorn running on port 5000.
 ---
 
 ## 2. Database Schema
