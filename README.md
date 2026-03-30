@@ -1,6 +1,8 @@
-# TaskMatch — Simplified Airtasker Clone on AWS
+#TaskMatch: A Cloud-Based Job Posting and Bidding Platform
 
-A minimal job-posting web app built with **Flask**, **Jinja2**, and **Bootstrap 5**, deployed on a production-grade AWS architecture with VPC, ALB, Auto Scaling, and RDS Multi-AZ.
+TaskMatch is a simplified job marketplace web application inspired by platforms like Airtasker. It enables users to post jobs, browse listings, and submit offers.
+
+The application is built using a lightweight Flask + Jinja2 architecture, with server-side rendering and no frontend framework. It is deployed on a scalable AWS infrastructure designed for high availability, fault tolerance, and cost efficiency.
 
 ---
 
